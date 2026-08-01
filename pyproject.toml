@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fairmatch-demo"
+version = "0.1.0"
+description = "Clean-room demo of fair two-sided matching: Gale-Shapley + NLP similarity + fairness diagnostics"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Rick Pack" }]
+keywords = ["gale-shapley", "stable-matching", "fairness", "disparate-impact", "nlp", "cosine-similarity"]
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.setuptools]
+packages = ["fairmatch"]
