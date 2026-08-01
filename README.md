@@ -25,9 +25,11 @@ A small, auditable pipeline that goes from free text to a fair set of pairings:
    (proposer-optimal), with seeded jitter to break score ties into the strict orderings
    the algorithm needs. Includes an independent `is_stable()` verifier (no blocking pair).
 3. **Fairness diagnostics** (`fairmatch/fairness.py`) — Top-20% mentor match rate, a
-   **disparate-impact ratio** checked against the EEOC four-fifths (0.80) rule, and an
-   **illustrative equivalence check** asking whether two matching methods produce
-   practically equivalent outcomes within a chosen margin.
+   **disparate-impact ratio** checked against the EEOC four-fifths (0.80) rule, and a
+   **paired equivalence test (TOST)** asking whether two matching methods produce
+   practically equivalent outcomes within a prespecified margin — built on **Tango's
+   (1998) score interval** for the paired difference in proportions, ported from scratch
+   in ~40 lines of standard library.
 
 ## Quick start
 
@@ -53,10 +55,11 @@ Match quality and fairness by similarity measure
                     group rates (junior=0.97, senior=0.96)
                     DI ratio = 0.994   four-fifths pass = True
 
-Illustrative equivalence of the two measures (Top-20% proportion)
+Paired equivalence of the two measures (TOST, Top-20% proportion)
 --------------------------------------------------------------
-  cosine = 0.976   matching_words = 0.964   diff = +0.012
-  90% CI on diff = [-0.013, +0.037]   margin = +/-0.05
+  matching_words = 0.964   cosine = 0.976   lambda-hat = -0.012
+  discordant pairs: b (MW only) = 5, c (CS only) = 8, n = 250
+  90% Tango score CI = [-0.039, +0.013]   margin = +/-0.05
   practically equivalent within margin: True
 ```
 
@@ -67,23 +70,54 @@ The equivalence verdict is intentionally sensitive to the margin and cohort size
 the cohort or the margin and it will flip, which is the point of reporting an interval
 rather than a bare yes/no.
 
+### The verdict flips as the cohort shrinks
+
+![90% Tango score confidence intervals on lambda-hat, the difference in Top-20% match
+rate between matching-words and cosine similarity, at synthetic cohort sizes of 50, 100,
+250 and 500. A shaded band marks the plus-or-minus 0.05 equivalence margin. At n = 250
+the interval [-0.039, +0.013] and at n = 500 the interval [-0.012, +0.012] sit entirely
+inside the band, so the two measures are declared practically equivalent. At n = 100 the
+interval [-0.044, +0.066] and at n = 50 the interval [-0.108, +0.064] spill outside the
+band and the equivalence verdict flips. All data is synthetic.](assets/equivalence_vs_cohort_readme.png)
+
+| Cohort | λ̂ = Rate(MW) − Rate(CS) | 90% Tango score CI | Within ±0.05? |
+|---|---|---|---|
+| n = 50  | −0.020 | [−0.108, +0.064] | no |
+| n = 100 | +0.010 | [−0.044, +0.066] | no |
+| n = 250 | −0.012 | [−0.039, +0.013] | **yes** |
+| n = 500 | +0.000 | [−0.012, +0.012] | **yes** |
+
+Same seed, same margin — only the cohort size changes. The point estimate barely moves;
+the *interval* does, and that is what decides the verdict. Reproduce the figure with:
+
+```bash
+pip install -e ".[viz]"     # matplotlib is an optional extra — core install stays clean
+python examples/make_plot.py
+```
+
 ## Project structure
 
 ```
 fairmatch/
   similarity.py   cosine similarity + matching-words overlap (from scratch)
   matching.py     Gale-Shapley deferred acceptance + stability verifier
-  fairness.py     Top-20% rate, disparate-impact ratio, illustrative equivalence
+  fairness.py     Top-20% rate, disparate-impact ratio, Tango paired TOST
   synthetic.py    reproducible synthetic mentor/mentee generator
   pipeline.py     text -> scores -> preferences -> matching -> fairness
 examples/run_demo.py    readable end-to-end report
+examples/make_plot.py   equivalence-vs-cohort-size figure (needs the [viz] extra)
+assets/                 committed PNGs produced by make_plot.py
 tests/test_fairmatch.py stability, similarity, and fairness-math tests
 ```
 
 ## Scope and honesty notes
 
-- The **equivalence check is an illustration**, not the paired score-interval TOST used in
-  the referenced research; it conveys the idea with a plain two-proportion interval.
+- The **equivalence check is the paired score-interval TOST**: both measures score the
+  same participants, so the design is paired and an independent-samples interval would be
+  the wrong model. `tango_score_ci()` is a from-scratch port of Tango (1998), pinned by a
+  test that reproduces R's `PropCIs::scoreci.mp(25, 28, 618)` to four decimals.
+  The wider apparatus of the referenced research (year strata, the survey-weight grid,
+  sensitivity margins) is out of scope here.
 - Group labels ("junior"/"senior") and bios are synthetic stand-ins chosen so the metrics
   have something to measure — they are not modeled on any real population.
 - The goal is clarity and correctness over completeness: the code is short enough to read
@@ -96,6 +130,10 @@ tests/test_fairmatch.py stability, similarity, and fairness-math tests
 - G. Salton, A. Wong, C. S. Yang (1975). *A Vector Space Model for Automatic Indexing.*
 - EEOC Uniform Guidelines on Employee Selection Procedures — the "four-fifths" rule.
 - Equivalence testing (TOST): Schuirmann (1987); Lakens (2017).
+- T. Tango (1998). *Equivalence test and confidence interval for the difference in
+  proportions for the paired-sample design.* Statistics in Medicine, 17(8), 891-908.
+- J.-P. Liu, H.-M. Hsueh, E. Hsieh, J. J. Chen (2002). *Tests for equivalence or
+  non-inferiority for paired binary data.* Statistics in Medicine, 21(2), 231-245.
 
 Related public work by the author (fill in links):
 

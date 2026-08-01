@@ -15,6 +15,7 @@ dependencies = []
 
 [project.optional-dependencies]
 test = ["pytest"]
+viz = ["matplotlib>=3.5"]   # only for examples/make_plot.py; core stays dependency-free
 
 [tool.setuptools]
 packages = ["fairmatch"]

@@ -54,9 +54,10 @@ def compare_measures(mentees: Sequence[Person],
     """Run both measures and return (results_by_measure, equivalence_summary)."""
     results = {name: run_matching(mentees, mentors, measure=name, seed=seed)
                for name in ("cosine", "matching_words")}
+    # Orientation follows the paper: lambda-hat = Rate(MW) - Rate(CS).
     equiv = fairness.equivalence_check(
-        results["cosine"].top20_flags,
         results["matching_words"].top20_flags,
+        results["cosine"].top20_flags,
         margin=margin,
     )
     return results, equiv

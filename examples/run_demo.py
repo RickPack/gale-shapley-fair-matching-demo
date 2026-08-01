@@ -30,16 +30,18 @@ def main() -> None:
         print(f"  {'':>15}   DI ratio = {di['di_ratio']:.3f}   "
               f"four-fifths pass = {di['passes_four_fifths']}\n")
 
-    print("Illustrative equivalence of the two measures (Top-20% proportion)")
+    print("Paired equivalence of the two measures (TOST, Top-20% proportion)")
     print("-" * 62)
-    print(f"  cosine = {equiv['prop_a']:.3f}   matching_words = {equiv['prop_b']:.3f}   "
-          f"diff = {equiv['diff']:+.3f}")
-    print(f"  90% CI on diff = [{equiv['ci_low']:+.3f}, {equiv['ci_high']:+.3f}]   "
+    print(f"  matching_words = {equiv['prop_1']:.3f}   cosine = {equiv['prop_2']:.3f}   "
+          f"lambda-hat = {equiv['diff']:+.3f}")
+    print(f"  discordant pairs: b (MW only) = {equiv['b']}, "
+          f"c (CS only) = {equiv['c']}, n = {equiv['n']}")
+    print(f"  90% Tango score CI = [{equiv['ci_low']:+.3f}, {equiv['ci_high']:+.3f}]   "
           f"margin = +/-{equiv['margin']:.2f}")
     print(f"  practically equivalent within margin: "
           f"{equiv['practically_equivalent']}")
-    print("\n(Equivalence here is a simple illustration, not the paired-score TOST "
-          "in the paper.)")
+    print("\n(lambda-hat = Rate(MW) - Rate(CS); Tango 1998 score interval for paired "
+          "proportions.)")
 
 
 if __name__ == "__main__":

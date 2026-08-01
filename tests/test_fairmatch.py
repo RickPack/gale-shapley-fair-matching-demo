@@ -55,6 +55,38 @@ def test_disparate_impact_math():
     assert di["passes_four_fifths"] is False
 
 
+def test_tango_score_ci_matches_r_propcis():
+    """Reproduce R's PropCIs::scoreci.mp(25, 28, 618) -> [-0.0148, +0.0247].
+
+    Those are the pooled discordant counts from the referenced paper (b = 28 positive
+    under matching words only, c = 25 under cosine only, n = 618 mentees). scoreci.mp's
+    estimand is (arg2 - arg1)/n, hence the swapped argument order.
+    """
+    ci = fairness.tango_score_ci(b=28, c=25, n=618, conf=0.90)
+    assert abs(ci["lambda_hat"] - 3 / 618) < 1e-12
+    assert abs(ci["ci_low"] - (-0.0148)) < 5e-5
+    assert abs(ci["ci_high"] - 0.0247) < 5e-5
+
+
+def test_tango_ci_brackets_the_estimate_and_is_symmetric_under_swap():
+    ci = fairness.tango_score_ci(b=28, c=25, n=618)
+    assert ci["ci_low"] < ci["lambda_hat"] < ci["ci_high"]
+    flipped = fairness.tango_score_ci(b=25, c=28, n=618)
+    assert abs(flipped["ci_low"] + ci["ci_high"]) < 1e-9   # mirror image
+    assert abs(flipped["ci_high"] + ci["ci_low"]) < 1e-9
+
+
+def test_equivalence_check_counts_discordant_pairs():
+    #                 1  2  3  4  5
+    flags_1 = [True,  True,  False, False, True]
+    flags_2 = [True,  False, True,  False, False]
+    e = fairness.equivalence_check(flags_1, flags_2, margin=0.05)
+    assert e["b"] == 2                      # positive under method 1 only (#2, #5)
+    assert e["c"] == 1                      # positive under method 2 only (#3)
+    assert abs(e["diff"] - 1 / 5) < 1e-12   # lambda-hat = (b - c)/n
+    assert e["practically_equivalent"] is False
+
+
 def test_pipeline_runs_and_is_stable():
     mentees, mentors = synthetic.generate(n_mentees=40, n_mentors=40, seed=7)
     r = run_matching(mentees, mentors, measure="cosine", seed=7)
