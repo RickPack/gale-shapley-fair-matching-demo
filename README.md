@@ -60,7 +60,7 @@ Illustrative equivalence of the two measures (Top-20% proportion)
   practically equivalent within margin: True
 ```
 
-Both similarity measures place ~96–98% of participants in a Top-20% mentor match, both matchings
+Both similarity measures place ~96–98% of participants in a Top-20% mentor match at this cohort size, both matchings
 are provably stable, both clear the four-fifths disparate-impact rule across groups, and —
 at this cohort size — the two measures are practically equivalent within a 5-point margin.
 The equivalence verdict is intentionally sensitive to the margin and cohort size; shrink
