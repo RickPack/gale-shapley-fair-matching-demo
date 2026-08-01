@@ -24,7 +24,7 @@ A small, auditable pipeline that goes from free text to a fair set of pairings:
 2. **Stable matching** (`fairmatch/matching.py`) — **Gale–Shapley deferred acceptance**
    (proposer-optimal), with seeded jitter to break score ties into the strict orderings
    the algorithm needs. Includes an independent `is_stable()` verifier (no blocking pair).
-3. **Fairness diagnostics** (`fairmatch/fairness.py`) — top-tier match rate, a
+3. **Fairness diagnostics** (`fairmatch/fairness.py`) — Top-20% mentor match rate, a
    **disparate-impact ratio** checked against the EEOC four-fifths (0.80) rule, and an
    **illustrative equivalence check** asking whether two matching methods produce
    practically equivalent outcomes within a chosen margin.
@@ -45,22 +45,22 @@ Synthetic cohort: 250 mentees, 250 mentors (all data randomly generated).
 
 Match quality and fairness by similarity measure
 --------------------------------------------------------------
-           cosine:  top-tier rate = 0.976   stable = True
+           cosine:  Top-20% rate = 0.976   stable = True
                     group rates (junior=0.97, senior=0.98)
                     DI ratio = 0.993   four-fifths pass = True
 
-   matching_words:  top-tier rate = 0.964   stable = True
+   matching_words:  Top-20% rate = 0.964   stable = True
                     group rates (junior=0.97, senior=0.96)
                     DI ratio = 0.994   four-fifths pass = True
 
-Illustrative equivalence of the two measures (top-tier proportion)
+Illustrative equivalence of the two measures (Top-20% proportion)
 --------------------------------------------------------------
   cosine = 0.976   matching_words = 0.964   diff = +0.012
   90% CI on diff = [-0.013, +0.037]   margin = +/-0.05
   practically equivalent within margin: True
 ```
 
-Both similarity measures place ~96–98% of participants in a top-tier match, both matchings
+Both similarity measures place ~96–98% of participants in a Top-20% mentor match, both matchings
 are provably stable, both clear the four-fifths disparate-impact rule across groups, and —
 at this cohort size — the two measures are practically equivalent within a 5-point margin.
 The equivalence verdict is intentionally sensitive to the margin and cohort size; shrink
@@ -73,7 +73,7 @@ rather than a bare yes/no.
 fairmatch/
   similarity.py   cosine similarity + matching-words overlap (from scratch)
   matching.py     Gale-Shapley deferred acceptance + stability verifier
-  fairness.py     top-tier rate, disparate-impact ratio, illustrative equivalence
+  fairness.py     Top-20% rate, disparate-impact ratio, illustrative equivalence
   synthetic.py    reproducible synthetic mentor/mentee generator
   pipeline.py     text -> scores -> preferences -> matching -> fairness
 examples/run_demo.py    readable end-to-end report

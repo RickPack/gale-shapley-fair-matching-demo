@@ -59,7 +59,7 @@ def test_pipeline_runs_and_is_stable():
     mentees, mentors = synthetic.generate(n_mentees=40, n_mentors=40, seed=7)
     r = run_matching(mentees, mentors, measure="cosine", seed=7)
     assert r.stable is True
-    assert 0.0 <= r.top_tier_rate <= 1.0
+    assert 0.0 <= r.top20_rate <= 1.0
     assert 0.0 <= r.disparate_impact["di_ratio"] <= 1.0
 
 

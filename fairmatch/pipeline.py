@@ -13,8 +13,8 @@ from .synthetic import Person
 class MatchResult:
     measure: str
     matching: Dict[int, int]
-    top_tier_flags: List[bool]
-    top_tier_rate: float
+    top20_flags: List[bool]
+    top20_rate: float
     disparate_impact: dict
     stable: bool
 
@@ -37,14 +37,14 @@ def run_matching(mentees: Sequence[Person],
 
     m = matching.gale_shapley(mentee_prefs, mentor_prefs)
 
-    flags = fairness.top_tier_flags(m, mentee_prefs, tier_fraction=tier_fraction)
+    flags = fairness.top20_flags(m, mentee_prefs, tier_fraction=tier_fraction)
     rate = sum(1 for f in flags if f) / len(flags) if flags else 0.0
     groups = [p.group for p in mentees]
     di = fairness.disparate_impact(flags, groups)
     stable = matching.is_stable(m, mentee_prefs, mentor_prefs)
 
-    return MatchResult(measure=measure, matching=m, top_tier_flags=flags,
-                       top_tier_rate=rate, disparate_impact=di, stable=stable)
+    return MatchResult(measure=measure, matching=m, top20_flags=flags,
+                       top20_rate=rate, disparate_impact=di, stable=stable)
 
 
 def compare_measures(mentees: Sequence[Person],
@@ -55,8 +55,8 @@ def compare_measures(mentees: Sequence[Person],
     results = {name: run_matching(mentees, mentors, measure=name, seed=seed)
                for name in ("cosine", "matching_words")}
     equiv = fairness.equivalence_check(
-        results["cosine"].top_tier_flags,
-        results["matching_words"].top_tier_flags,
+        results["cosine"].top20_flags,
+        results["matching_words"].top20_flags,
         margin=margin,
     )
     return results, equiv

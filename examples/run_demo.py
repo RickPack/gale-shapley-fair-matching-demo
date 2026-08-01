@@ -24,13 +24,13 @@ def main() -> None:
     for name, r in results.items():
         di = r.disparate_impact
         rates = ", ".join(f"{g}={v:.2f}" for g, v in sorted(di["rates"].items()))
-        print(f"  {name:>15}:  top-tier rate = {r.top_tier_rate:.3f}   "
+        print(f"  {name:>15}:  Top-20% rate = {r.top20_rate:.3f}   "
               f"stable = {r.stable}")
         print(f"  {'':>15}   group rates ({rates})")
         print(f"  {'':>15}   DI ratio = {di['di_ratio']:.3f}   "
               f"four-fifths pass = {di['passes_four_fifths']}\n")
 
-    print("Illustrative equivalence of the two measures (top-tier proportion)")
+    print("Illustrative equivalence of the two measures (Top-20% proportion)")
     print("-" * 62)
     print(f"  cosine = {equiv['prop_a']:.3f}   matching_words = {equiv['prop_b']:.3f}   "
           f"diff = {equiv['diff']:+.3f}")

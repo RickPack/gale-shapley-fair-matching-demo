@@ -2,14 +2,14 @@
 
 Deliberately lightweight and transparent:
 
-* **Top-tier match rate** — the share of proposers matched to one of their most
+* **Top-20% mentor match rate** — the share of proposers matched to one of their most
   preferred receivers (top `tier_fraction` of the receiver list). A simple, auditable
   proxy for match quality.
-* **Disparate-impact (DI) ratio** — the ratio of top-tier rates between demographic
+* **Disparate-impact (DI) ratio** — the ratio of Top-20% rates between demographic
   groups, compared against the EEOC "four-fifths" (0.80) rule of thumb.
 * **Illustrative equivalence check** — a plain two-proportion difference with a
   normal-approximation interval, to ask whether two matching methods produce
-  practically equivalent top-tier rates within a chosen margin.
+  practically equivalent Top-20% rates within a chosen margin.
 
 NOTE: the equivalence check here is an *illustration*, not the paired score-interval
 TOST used in the referenced paper. It is intended to convey the idea, not to reproduce
@@ -22,12 +22,12 @@ from collections import defaultdict
 from typing import Dict, List, Optional, Sequence
 
 
-def top_tier_flags(matching: Dict[int, int],
+def top20_flags(matching: Dict[int, int],
                    proposer_prefs: Sequence[Sequence[int]],
                    tier_fraction: float = 0.20) -> List[bool]:
     """For each proposer, whether their matched receiver is in their top `tier_fraction`.
 
-    Proposers with no match are counted as not top-tier.
+    Proposers with no match are counted as not Top-20%.
     """
     n_receivers = len(proposer_prefs[0]) if proposer_prefs else 0
     cutoff = max(1, math.ceil(tier_fraction * n_receivers))
@@ -43,7 +43,7 @@ def top_tier_flags(matching: Dict[int, int],
 
 
 def group_rates(flags: Sequence[bool], groups: Sequence[str]) -> Dict[str, float]:
-    """Top-tier selection rate within each group label."""
+    """Top-20% selection rate within each group label."""
     hit: Dict[str, int] = defaultdict(int)
     tot: Dict[str, int] = defaultdict(int)
     for f, g in zip(flags, groups):
@@ -66,7 +66,7 @@ def equivalence_check(flags_a: Sequence[bool],
                       flags_b: Sequence[bool],
                       margin: float = 0.05,
                       conf: float = 0.90) -> Dict[str, Optional[float]]:
-    """Illustrative equivalence of two methods' overall top-tier proportions.
+    """Illustrative equivalence of two methods' overall Top-20% proportions.
 
     Returns the two proportions, their difference, a normal-approx confidence interval
     on the difference, and whether that interval sits entirely within +/- `margin`

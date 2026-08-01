@@ -9,7 +9,7 @@ Modules
 -------
 similarity : text tokenization, cosine similarity, and matching-words overlap
 matching   : Gale-Shapley deferred-acceptance stable matching (proposer-optimal)
-fairness   : top-tier match quality, disparate-impact ratio, illustrative equivalence
+fairness   : Top-20% mentor match quality, disparate-impact ratio, illustrative equivalence
 synthetic  : reproducible synthetic mentor/mentee generator
 pipeline   : end-to-end text -> scores -> preferences -> matching -> fairness
 """
