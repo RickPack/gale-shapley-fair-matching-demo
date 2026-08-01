@@ -77,7 +77,8 @@ def draw(rows, path, size_in, dpi, base_font):
     ax.set_xticklabels([f"n = {n}" for n, _ in rows])
     ax.set_xlim(-0.6, len(rows) - 0.4)
     ax.set_xlabel("Cohort size (mentees = mentors)", labelpad=8)
-    ax.set_ylabel("$\\hat{\\lambda}$ = Top-20% rate,\nmatching words $-$ cosine")
+    ax.set_ylabel("$\\hat{\\lambda}$ = Top-20% rate (mentor compatibility),\n"
+                  "matching words $-$ cosine similarity")
     ax.set_title("Small cohorts flip the equivalence verdict",
                  fontsize=base_font + 5, fontweight="bold", loc="left", pad=34)
     ax.text(0.0, 1.012,
