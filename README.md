@@ -135,12 +135,13 @@ tests/test_fairmatch.py stability, similarity, and fairness-math tests
 - J.-P. Liu, H.-M. Hsueh, E. Hsieh, J. J. Chen (2002). *Tests for equivalence or
   non-inferiority for paired binary data.* Statistics in Medicine, 21(2), 231-245.
 
-Related public work by the author (fill in links):
+Related public work by the author:
 
 - JSM 2026 Speed session — "Fair Mentor Matching with Gale–Shapley Pairing, Transparent
-  Design, and Statistical Validation."  ⟶ `<link>`
+  Design, and Statistical Validation."
+  ⟶ https://ww3.aievolution.com/JSMAnnual2026/Events/viewEv?ev=9095
 - "Surrogate Membership for Inferred Metrics in Fairness Evaluation," LION 2023 (coauthor).
-  ⟶ `<link>`
+  ⟶ https://link.springer.com/chapter/10.1007/978-3-031-44505-7_29
 
 ## License
 
