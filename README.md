@@ -1,7 +1,7 @@
-# Fair Two-Sided Matching — a clean-room demo
+# Fair Two-Sided Matching: a clean-room demo
 
 Stable matching (Gale–Shapley) driven by **NLP text similarity**, with **group-fairness
-diagnostics** — implemented from scratch in pure-Python, on fully synthetic data.
+diagnostics**. Implemented from scratch in pure Python, on fully synthetic data.
 
 > **Clean-room / independent work.** This repository is an original, educational
 > reimplementation built **only from the public description** of the method (see the
@@ -15,25 +15,25 @@ diagnostics** — implemented from scratch in pure-Python, on fully synthetic da
 
 A small, auditable pipeline that goes from free text to a fair set of pairings:
 
-1. **Text similarity** (`fairmatch/similarity.py`) — two interpretable compatibility
+1. **Text similarity** (`fairmatch/similarity.py`): two interpretable compatibility
    signals computed from participants' short "bios":
    - **Cosine similarity** over term-frequency vectors (the classic Vector Space Model),
      length-normalized to `[0, 1]`.
-   - **Matching words** — a raw count of shared tokens (simple, but unnormalized, so it
+   - **Matching words**: a raw count of shared tokens (simple, but unnormalized, so it
      carries a length bias).
-2. **Stable matching** (`fairmatch/matching.py`) — **Gale–Shapley deferred acceptance**
+2. **Stable matching** (`fairmatch/matching.py`): **Gale–Shapley deferred acceptance**
    (proposer-optimal), with seeded jitter to break score ties into the strict orderings
    the algorithm needs. Includes an independent `is_stable()` verifier (no blocking pair).
-3. **Fairness diagnostics** (`fairmatch/fairness.py`) — Top-20% mentor match rate, a
+3. **Fairness diagnostics** (`fairmatch/fairness.py`): Top-20% mentor match rate, a
    **disparate-impact ratio** checked against the EEOC four-fifths (0.80) rule, and a
    **paired equivalence test (TOST)** asking whether two matching methods produce
-   practically equivalent outcomes within a prespecified margin — built on **Tango's
+   practically equivalent outcomes within a prespecified margin. Built on **Tango's
    (1998) score interval** for the paired difference in proportions, ported from scratch
    in ~40 lines of standard library.
 
 ## Quick start
 
-No third-party dependencies — standard library only (Python 3.9+).
+No third-party dependencies. Standard library only (Python 3.9+).
 
 ```bash
 python examples/run_demo.py      # end-to-end demo on synthetic data
@@ -63,12 +63,12 @@ Paired equivalence of the two measures (TOST, Top-20% proportion)
   practically equivalent within margin: True
 ```
 
-Both similarity measures place ~96–98% of participants in a Top-20% mentor match at this cohort size, both matchings
-are provably stable, both clear the four-fifths disparate-impact rule across groups, and —
-at this cohort size — the two measures are practically equivalent within a 5-point margin.
-The equivalence verdict is intentionally sensitive to the margin and cohort size; shrink
-the cohort or the margin and it will flip, which is the point of reporting an interval
-rather than a bare yes/no.
+Both similarity measures place ~96–98% of participants in a Top-20% mentor match at
+n = 250, both matchings are provably stable, both clear the four-fifths
+disparate-impact rule across groups, and the two measures are practically equivalent
+within a 5-point margin. The equivalence verdict is intentionally sensitive to the
+margin and cohort size; shrink the cohort or the margin and it will flip, which is the
+point of reporting an interval rather than a bare yes/no.
 
 ### The verdict flips as the cohort shrinks
 
@@ -80,18 +80,36 @@ inside the band, so the two measures are declared practically equivalent. At n =
 interval [-0.044, +0.066] and at n = 50 the interval [-0.108, +0.064] spill outside the
 band and the equivalence verdict flips. All data is synthetic.](assets/equivalence_vs_cohort_readme.png)
 
-| Cohort | λ̂ = Rate(MW) − Rate(CS) | 90% Tango score CI | Within ±0.05? |
-|---|---|---|---|
-| n = 50  | −0.020 | [−0.108, +0.064] | no |
-| n = 100 | +0.010 | [−0.044, +0.066] | no |
-| n = 250 | −0.012 | [−0.039, +0.013] | **yes** |
-| n = 500 | +0.000 | [−0.012, +0.012] | **yes** |
+<table width="500">
+<thead>
+<tr><th>Cohort</th><th>λ̂ = Rate(MW) − Rate(CS)</th><th>90% Tango score CI</th><th>Within ±0.05?</th></tr>
+</thead>
+<tbody>
+<tr><td>n = 50</td><td>−0.020</td><td>[−0.108, +0.064]</td><td>no</td></tr>
+<tr><td>n = 100</td><td>+0.010</td><td>[−0.044, +0.066]</td><td>no</td></tr>
+<tr><td>n = 250</td><td>−0.012</td><td>[−0.039, +0.013]</td><td><strong>yes</strong></td></tr>
+<tr><td>n = 500</td><td>+0.000</td><td>[−0.012, +0.012]</td><td><strong>yes</strong></td></tr>
+</tbody>
+</table>
 
-Same seed, same margin — only the cohort size changes. The point estimate barely moves;
-the *interval* does, and that is what decides the verdict. Reproduce the figure with:
+Same seed (42), same margin (±0.05). Only the cohort size changes. The point estimate
+barely moves; the *interval* does, and that is what decides the verdict.
+
+Lo, Datta & Salami (2025, §4, *AI and Ethics*) argue directly that fairness tests near
+a threshold require enough power to distinguish near-compliance from breach, and that
+small cohorts commonly fail tests that larger ones pass, not because the algorithm
+behaved differently but because the interval widened. This table is that argument run to
+ground: the upper bound at n = 100 (0.066) exceeds the margin (0.050) by 16 pp worth of
+interval width; at n = 250 the same algorithm clears it with room to spare. The
+[full R analysis](https://github.com/RickPack/gale-shapley-fair-matching-synthetic) pools
+588 matched pairs across three synthetic survey years and fails equivalence for a
+different reason: signal collapse, not sample size. Both failure modes are explained
+with measured data, not asserted.
+
+Reproduce the figure with:
 
 ```bash
-pip install -e ".[viz]"     # matplotlib is an optional extra — core install stays clean
+pip install -e ".[viz]"     # matplotlib is an optional extra; core install stays clean
 python examples/make_plot.py
 ```
 
@@ -117,10 +135,10 @@ tests/test_fairmatch.py stability, similarity, and fairness-math tests
   the wrong model. `tango_score_ci()` is a from-scratch port of Tango (1998), pinned by a
   test that reproduces R's `PropCIs::scoreci.mp(25, 28, 618)` to four decimals.
   The wider apparatus of the referenced research (year strata, the survey-weight grid,
-  sensitivity margins) is out of scope here.
-- Group labels ("junior"/"senior") and bios are synthetic stand-ins chosen so the metrics
-  have something to measure — they are not modeled on any real population.
-- The goal is clarity and correctness over completeness: the code is short enough to read
+  sensitivity margins) is in the [full R analysis](https://github.com/RickPack/gale-shapley-fair-matching-synthetic), not here.
+- Group labels ("junior"/"senior") and bios are synthetic stand-ins, not modeled on any
+  real population.
+- The goal is clarity and correctness, not completeness. The code is short enough to read
   in one sitting.
 
 ## Background and references
@@ -128,16 +146,18 @@ tests/test_fairmatch.py stability, similarity, and fairness-math tests
 - D. Gale and L. S. Shapley (1962). *College Admissions and the Stability of Marriage.*
   American Mathematical Monthly.
 - G. Salton, A. Wong, C. S. Yang (1975). *A Vector Space Model for Automatic Indexing.*
-- EEOC Uniform Guidelines on Employee Selection Procedures — the "four-fifths" rule.
+- EEOC Uniform Guidelines on Employee Selection Procedures (the "four-fifths" rule).
 - Equivalence testing (TOST): Schuirmann (1987); Lakens (2017).
 - T. Tango (1998). *Equivalence test and confidence interval for the difference in
   proportions for the paired-sample design.* Statistics in Medicine, 17(8), 891-908.
 - J.-P. Liu, H.-M. Hsueh, E. Hsieh, J. J. Chen (2002). *Tests for equivalence or
   non-inferiority for paired binary data.* Statistics in Medicine, 21(2), 231-245.
+- V. S. Y. Lo, S. Datta & Y. Salami (2025). *Bringing practical statistical science to
+  AI and predictive model fairness testing.* AI and Ethics, 5, 2149–2164.
 
 Related public work by the author:
 
-- JSM 2026 Speed session — "Fair Mentor Matching with Gale–Shapley Pairing, Transparent
+- JSM 2026 Speed session: "Fair Mentor Matching with Gale–Shapley Pairing, Transparent
   Design, and Statistical Validation."
   ⟶ https://ww3.aievolution.com/JSMAnnual2026/Events/viewEv?ev=9095
 - "Surrogate Membership for Inferred Metrics in Fairness Evaluation," LION 2023 (coauthor).
@@ -145,6 +165,6 @@ Related public work by the author:
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE).
 
 *Author: Rick Pack · [linkedin.com/in/rick-pack-mappstat-5320387](https://www.linkedin.com/in/rick-pack-mappstat-5320387/) · github.com/RickPack*
