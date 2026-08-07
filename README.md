@@ -66,9 +66,8 @@ Paired equivalence of the two measures (TOST, Top-20% proportion)
 Both similarity measures place ~96–98% of participants in a Top-20% mentor match at
 n = 250, both matchings are provably stable, both clear the four-fifths
 disparate-impact rule across groups, and the two measures are practically equivalent
-within a 5-point margin. The equivalence verdict is intentionally sensitive to the
-margin and cohort size; shrink the cohort or the margin and it will flip, which is the
-point of reporting an interval rather than a bare yes/no.
+within a 5-point margin. That last verdict depends on how many participants you test,
+which the next section takes apart.
 
 ### The verdict flips as the cohort shrinks
 
@@ -80,27 +79,22 @@ inside the band, so the two measures are declared practically equivalent. At n =
 interval [-0.044, +0.066] and at n = 50 the interval [-0.108, +0.064] spill outside the
 band and the equivalence verdict flips. All data is synthetic.](assets/equivalence_vs_cohort_readme.png)
 
-<table width="500">
-<thead>
-<tr><th>Cohort</th><th>λ̂ = Rate(MW) − Rate(CS)</th><th>90% Tango score CI</th><th>Within ±0.05?</th></tr>
-</thead>
-<tbody>
-<tr><td>n = 50</td><td>−0.020</td><td>[−0.108, +0.064]</td><td>no</td></tr>
-<tr><td>n = 100</td><td>+0.010</td><td>[−0.044, +0.066]</td><td>no</td></tr>
-<tr><td>n = 250</td><td>−0.012</td><td>[−0.039, +0.013]</td><td><strong>yes</strong></td></tr>
-<tr><td>n = 500</td><td>+0.000</td><td>[−0.012, +0.012]</td><td><strong>yes</strong></td></tr>
-</tbody>
-</table>
+| Cohort | λ̂ = Rate(MW) − Rate(CS) | 90% Tango score CI | Within ±0.05? |
+|---|---|---|---|
+| n = 50 | −0.020 | [−0.108, +0.064] | no |
+| n = 100 | +0.010 | [−0.044, +0.066] | no |
+| n = 250 | −0.012 | [−0.039, +0.013] | **yes** |
+| n = 500 | +0.000 | [−0.012, +0.012] | **yes** |
 
-Same seed (42), same margin (±0.05). Only the cohort size changes. The point estimate
+Same seed (20260724), same margin (±0.05). Only the cohort size changes. The point estimate
 barely moves; the *interval* does, and that is what decides the verdict.
 
 Lo, Datta & Salami (2025, §4, *AI and Ethics*) argue directly that fairness tests near
 a threshold require enough power to distinguish near-compliance from breach, and that
 small cohorts commonly fail tests that larger ones pass, not because the algorithm
-behaved differently but because the interval widened. This table is that argument run to
-ground: the upper bound at n = 100 (0.066) exceeds the margin (0.050) by 16 pp worth of
-interval width; at n = 250 the same algorithm clears it with room to spare. The
+behaved differently but because the interval widened. The table above is that argument
+run to ground: one algorithm, one seed, four cohort sizes, and the verdict turns over
+between the second row and the third. The
 [full R analysis](https://github.com/RickPack/gale-shapley-fair-matching-synthetic) pools
 588 matched pairs across three synthetic survey years and fails equivalence for a
 different reason: signal collapse, not sample size. Both failure modes are explained
@@ -135,7 +129,7 @@ tests/test_fairmatch.py stability, similarity, and fairness-math tests
   the wrong model. `tango_score_ci()` is a from-scratch port of Tango (1998), pinned by a
   test that reproduces R's `PropCIs::scoreci.mp(25, 28, 618)` to four decimals.
   The wider apparatus of the referenced research (year strata, the survey-weight grid,
-  sensitivity margins) is in the [full R analysis](https://github.com/RickPack/gale-shapley-fair-matching-synthetic), not here.
+  sensitivity margins) is in the full R analysis linked above, not here.
 - Group labels ("junior"/"senior") and bios are synthetic stand-ins, not modeled on any
   real population.
 - The goal is clarity and correctness, not completeness. The code is short enough to read
@@ -153,7 +147,7 @@ tests/test_fairmatch.py stability, similarity, and fairness-math tests
 - J.-P. Liu, H.-M. Hsueh, E. Hsieh, J. J. Chen (2002). *Tests for equivalence or
   non-inferiority for paired binary data.* Statistics in Medicine, 21(2), 231-245.
 - V. S. Y. Lo, S. Datta & Y. Salami (2025). *Bringing practical statistical science to
-  AI and predictive model fairness testing.* AI and Ethics, 5, 2149–2164.
+  AI and predictive model fairness testing.* AI and Ethics, 5, 2149-2164.
 
 Related public work by the author:
 
