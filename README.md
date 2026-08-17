@@ -11,6 +11,16 @@ diagnostics**. Implemented from scratch in pure Python, on fully synthetic data.
 > generated**. It exists to demonstrate the *technique and reasoning*, not to reproduce
 > any production system.
 
+## Why synthetic data?
+
+Real matching pipelines run on survey responses that contain free-text descriptions,
+demographic indicators, and organizational metadata — none of which can be published.
+Synthetic data lets you validate the statistical properties of the matching algorithm
+(stability, fairness, equivalence) and share the full pipeline publicly, without
+exposing any personally identifiable information. Every participant in this repository
+is randomly generated; the bios, group labels, and cohort sizes are chosen to exercise
+the same code paths and fairness boundaries that matter on real data.
+
 ## What it demonstrates
 
 A small, auditable pipeline that goes from free text to a fair set of pairings:
