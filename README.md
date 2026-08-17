@@ -1,5 +1,7 @@
 # Fair Two-Sided Matching: a clean-room demo
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 Stable matching (Gale–Shapley) driven by **NLP text similarity**, with **group-fairness
 diagnostics**. Implemented from scratch in pure Python, on fully synthetic data.
 
@@ -14,7 +16,7 @@ diagnostics**. Implemented from scratch in pure Python, on fully synthetic data.
 ## Why synthetic data?
 
 Real matching pipelines run on survey responses that contain free-text descriptions,
-demographic indicators, and organizational metadata — none of which can be published.
+demographic indicators, and organizational metadata, none of which can be published.
 Synthetic data lets you validate the statistical properties of the matching algorithm
 (stability, fairness, equivalence) and share the full pipeline publicly, without
 exposing any personally identifiable information. Every participant in this repository
@@ -108,7 +110,9 @@ between the second row and the third. The
 [full R analysis](https://github.com/RickPack/gale-shapley-fair-matching-synthetic) pools
 591 matched pairs across three synthetic survey years and fails equivalence for a
 different reason: signal collapse, not sample size. Both failure modes are explained
-with measured data, not asserted.
+with measured data, not asserted. That repository's own
+[statistical power discussion](https://github.com/RickPack/gale-shapley-fair-matching-synthetic#statistical-power-and-the-boundary-problem)
+cites this demonstration as the isolated version of the same mechanism.
 
 Reproduce the figure with:
 
