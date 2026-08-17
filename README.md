@@ -117,9 +117,10 @@ behaved differently but because the interval widened. The table above is that ar
 run to ground: one algorithm, one seed, four cohort sizes, and the verdict turns over
 between the second row and the third. The
 [full R analysis](https://github.com/RickPack/gale-shapley-fair-matching-synthetic) pools
-591 matched pairs across three synthetic survey years and fails equivalence for a
-different reason: signal collapse, not sample size. Both failure modes are explained
-with measured data, not asserted. That repository's own
+591 matched pairs across three synthetic survey years and still fails equivalence: its
+pooled interval, [+0.72, +5.77] pp, misses a ±5 pp margin by 0.77 pp at the upper end
+while the point estimate sits well inside it. Same mechanism, larger cohort, tighter
+margin. That repository's own
 [statistical power discussion](https://github.com/RickPack/gale-shapley-fair-matching-synthetic#statistical-power-and-the-boundary-problem)
 cites this demonstration as the isolated version of the same mechanism.
 
