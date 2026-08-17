@@ -1,9 +1,18 @@
-# Fair Two-Sided Matching: a clean-room demo
+# Fair Two-Sided Matching from scratch: Gale–Shapley, text similarity, equivalence testing
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 Stable matching (Gale–Shapley) driven by **NLP text similarity**, with **group-fairness
-diagnostics**. Implemented from scratch in pure Python, on fully synthetic data.
+diagnostics**, in **under 500 lines of pure standard-library Python** — no NumPy, no
+scikit-learn, no SciPy. That includes a from-scratch port of **Tango's (1998) paired score
+interval**, pinned by a test that reproduces R's `PropCIs::scoreci.mp` to four decimals, so
+the equivalence test is verified rather than taken on faith from a library.
+
+The result worth the click is a negative one:
+[holding the algorithm, the seed, and the equivalence margin fixed, the fairness verdict
+flips purely as the cohort shrinks](#the-verdict-flips-as-the-cohort-shrinks) — 250
+participants pass, 100 fail. A fairness pass or fail reported without its sample size is
+incomplete, and this repository is the smallest complete demonstration of why.
 
 > **Clean-room / independent work.** This repository is an original, educational
 > reimplementation built **only from the public description** of the method (see the
