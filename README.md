@@ -106,7 +106,7 @@ behaved differently but because the interval widened. The table above is that ar
 run to ground: one algorithm, one seed, four cohort sizes, and the verdict turns over
 between the second row and the third. The
 [full R analysis](https://github.com/RickPack/gale-shapley-fair-matching-synthetic) pools
-588 matched pairs across three synthetic survey years and fails equivalence for a
+591 matched pairs across three synthetic survey years and fails equivalence for a
 different reason: signal collapse, not sample size. Both failure modes are explained
 with measured data, not asserted.
 
