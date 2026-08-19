@@ -1,9 +1,18 @@
-# Fair Two-Sided Matching: a clean-room demo
+# Fair Two-Sided Matching from scratch: Gale–Shapley, text similarity, equivalence testing
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 Stable matching (Gale–Shapley) driven by **NLP text similarity**, with **group-fairness
-diagnostics**. Implemented from scratch in pure Python, on fully synthetic data.
+diagnostics**, in **under 500 lines of pure standard-library Python** — no NumPy, no
+scikit-learn, no SciPy. That includes a from-scratch port of **Tango's (1998) paired score
+interval**, pinned by a test that reproduces R's `PropCIs::scoreci.mp` to four decimals, so
+the equivalence test is verified rather than taken on faith from a library.
+
+The result worth the click is a negative one:
+[holding the algorithm, the seed, and the equivalence margin fixed, the fairness verdict
+flips purely as the cohort shrinks](#the-verdict-flips-as-the-cohort-shrinks) — 250
+participants pass, 100 fail. A fairness pass or fail reported without its sample size is
+incomplete, and this repository is the smallest complete demonstration of why.
 
 > **Clean-room / independent work.** This repository is an original, educational
 > reimplementation built **only from the public description** of the method (see the
@@ -108,9 +117,11 @@ behaved differently but because the interval widened. The table above is that ar
 run to ground: one algorithm, one seed, four cohort sizes, and the verdict turns over
 between the second row and the third. The
 [full R analysis](https://github.com/RickPack/gale-shapley-fair-matching-synthetic) pools
-591 matched pairs across three synthetic survey years and fails equivalence for a
-different reason: signal collapse, not sample size. Both failure modes are explained
-with measured data, not asserted. That repository's own
+549 matched pairs across three synthetic survey years and passes equivalence pooled, but
+not in every individual year: 2023 (n = 173) and 2025 (n = 100) both fail the same ±5 pp
+margin their pooled figure clears, on point estimates barely different from the passing
+years'. Same mechanism as the table above, run on real-shaped data instead of a synthetic
+sweep. That repository's own
 [statistical power discussion](https://github.com/RickPack/gale-shapley-fair-matching-synthetic#statistical-power-and-the-boundary-problem)
 cites this demonstration as the isolated version of the same mechanism.
 
@@ -141,7 +152,8 @@ tests/test_fairmatch.py stability, similarity, and fairness-math tests
 - The **equivalence check is the paired score-interval TOST**: both measures score the
   same participants, so the design is paired and an independent-samples interval would be
   the wrong model. `tango_score_ci()` is a from-scratch port of Tango (1998), pinned by a
-  test that reproduces R's `PropCIs::scoreci.mp(25, 28, 618)` to four decimals.
+  test that reproduces R's `PropCIs::scoreci.mp(12, 19, 300)` to four decimals — arbitrary
+  values with no relation to any study.
   The wider apparatus of the referenced research (year strata, the survey-weight grid,
   sensitivity margins) is in the full R analysis linked above, not here.
 - Group labels ("junior"/"senior") and bios are synthetic stand-ins, not modeled on any
