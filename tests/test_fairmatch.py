@@ -56,22 +56,23 @@ def test_disparate_impact_math():
 
 
 def test_tango_score_ci_matches_r_propcis():
-    """Reproduce R's PropCIs::scoreci.mp(25, 28, 618) -> [-0.0148, +0.0247].
+    """Reproduce R's PropCIs::scoreci.mp(12, 19, 300) -> [-0.0075, +0.0554].
 
-    Those are the pooled discordant counts from the referenced paper (b = 28 positive
-    under matching words only, c = 25 under cosine only, n = 618 mentees). scoreci.mp's
-    estimand is (arg2 - arg1)/n, hence the swapped argument order.
+    Arbitrary discordant counts and cohort size (b = 19, c = 12, n = 300), chosen only
+    to exercise the formula against R's reference implementation; they have no relation
+    to any study. scoreci.mp's estimand is (arg2 - arg1)/n, hence the swapped argument
+    order.
     """
-    ci = fairness.tango_score_ci(b=28, c=25, n=618, conf=0.90)
-    assert abs(ci["lambda_hat"] - 3 / 618) < 1e-12
-    assert abs(ci["ci_low"] - (-0.0148)) < 5e-5
-    assert abs(ci["ci_high"] - 0.0247) < 5e-5
+    ci = fairness.tango_score_ci(b=19, c=12, n=300, conf=0.90)
+    assert abs(ci["lambda_hat"] - 7 / 300) < 1e-12
+    assert abs(ci["ci_low"] - (-0.0075)) < 5e-5
+    assert abs(ci["ci_high"] - 0.0554) < 5e-5
 
 
 def test_tango_ci_brackets_the_estimate_and_is_symmetric_under_swap():
-    ci = fairness.tango_score_ci(b=28, c=25, n=618)
+    ci = fairness.tango_score_ci(b=19, c=12, n=300)
     assert ci["ci_low"] < ci["lambda_hat"] < ci["ci_high"]
-    flipped = fairness.tango_score_ci(b=25, c=28, n=618)
+    flipped = fairness.tango_score_ci(b=12, c=19, n=300)
     assert abs(flipped["ci_low"] + ci["ci_high"]) < 1e-9   # mirror image
     assert abs(flipped["ci_high"] + ci["ci_low"]) < 1e-9
 

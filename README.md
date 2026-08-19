@@ -152,7 +152,8 @@ tests/test_fairmatch.py stability, similarity, and fairness-math tests
 - The **equivalence check is the paired score-interval TOST**: both measures score the
   same participants, so the design is paired and an independent-samples interval would be
   the wrong model. `tango_score_ci()` is a from-scratch port of Tango (1998), pinned by a
-  test that reproduces R's `PropCIs::scoreci.mp(25, 28, 618)` to four decimals.
+  test that reproduces R's `PropCIs::scoreci.mp(12, 19, 300)` to four decimals — arbitrary
+  values with no relation to any study.
   The wider apparatus of the referenced research (year strata, the survey-weight grid,
   sensitivity margins) is in the full R analysis linked above, not here.
 - Group labels ("junior"/"senior") and bios are synthetic stand-ins, not modeled on any
